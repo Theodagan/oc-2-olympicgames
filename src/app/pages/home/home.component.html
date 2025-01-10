@@ -1,0 +1,10 @@
+<p>home works!</p>
+
+@for (item of olympicData(); track $index) {
+    {{item.country}}
+    <br>
+    @for (p of item.participations; track $index) {
+       {{p.year}} : {{p.medalsCount}} /
+    }
+    <br><br>
+}
