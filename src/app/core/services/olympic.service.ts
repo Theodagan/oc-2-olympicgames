@@ -1,9 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { errorContext } from 'rxjs/internal/util/errorContext';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'

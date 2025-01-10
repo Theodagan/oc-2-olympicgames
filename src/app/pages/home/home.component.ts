@@ -1,20 +1,22 @@
-import { Component, OnInit, effect, untracked } from '@angular/core';
+import { Component, OnInit, effect } from '@angular/core';
 import { OlympicService } from '../../core/services/olympic.service';
 import { signal } from '@angular/core';
+import { HomeChartComponent } from '../../components/home-chart/home-chart.component';
 
 @Component({
   selector: 'app-home',
-  imports: [],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.css'
+  styleUrl: './home.component.css',
+  imports: [HomeChartComponent],
 })
 
 export class HomeComponent implements OnInit {
 
   public olympicData = signal<any>(null); //change to undefined later
+  
 
   constructor(private olympicService: OlympicService) {
-    //handle chang in signals
+    //handle changes in signals
     effect(() => {
       console.log("effect fired", this.olympicData());
     });
