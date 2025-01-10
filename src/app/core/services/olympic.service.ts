@@ -10,27 +10,39 @@ import { errorContext } from 'rxjs/internal/util/errorContext';
 })
 export class OlympicService {
   private olympicUrl = 'mock/olympic.json';
-  private olympicData = signal<any>("service"); //change to undefined later
+  private olympicData = signal<any>(undefined);
+
+  private observable = new Observable<any>();
+  private hasBeenCalled : boolean = false;
   
   constructor(private http: HttpClient) {}
   
   loadInitialData(){
-    console.log("test 1", "loadInitialData", this.http.get<any>(this.olympicUrl));
+    //console.log("test 1", "loadInitialData", this.http.get<any>(this.olympicUrl));
     
-    let data = this.http.get<any>(this.olympicUrl);
+    //EXPL : check si la fonciton a déjà été appellée pour ne pas créer 50 observables pour rien
+    if(!this.hasBeenCalled){
+      console.info('loadInitialData if')
+      
+      this.hasBeenCalled = true;
+      this.observable = this.http.get<any>(this.olympicUrl);
 
-    data.subscribe({
-      next: (v) => {
-        console.log("test 2", v);
-        this.olympicData.set(v);
-        console.log("test 3", this.olympicData());
-      },
-      error: (e) => console.error(e),
-      complete: () => console.info('data fetched') 
-    });
+      this.observable.subscribe({
+        next: (v) => {
+          console.log("test 2", v);
+          this.olympicData.set(v);
+          console.log("test 3", this.olympicData());
+        },
+        error: (e) => console.error(e),
+        complete: () => console.info('data fetched') 
+      });
+    }
     
-    console.log("test 4", data);
-    return data;
+    //V2 faire du return une fonction séparée ?
+
+    //EXPL : renvoit l'observable pour pouvoir subscribe au complete de n'importe où
+    //console.log("test 4", this.observable);
+    return this.observable;
   }
   
   getOlympics() {

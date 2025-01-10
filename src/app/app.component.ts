@@ -15,5 +15,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     console.log('AppComponent initialized');
+    this.olympicService.loadInitialData();
   }
 }
