@@ -1,0 +1,20 @@
+<button><a href="/">Retour</a></button>
+
+<h2>{{countryName}}</h2>
+
+<div style="display: flex;">
+    <div>
+        <span>Number of entries</span>
+        {{countryNbrOfParticipations}}
+    </div>
+    <div>
+        <span>Total number of medals </span>
+        {{countryMedalsTotal}}
+    </div>
+    <div>
+        <span>Total number of athletes </span>
+        {{countryAthleteTotal}}
+    </div>
+</div>
+
+<app-country-chart></app-country-chart>

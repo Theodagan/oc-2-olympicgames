@@ -1,5 +1,7 @@
-import { Component, OnInit, effect } from '@angular/core';
+import { Component, OnInit, effect, inject } from '@angular/core';
 import { OlympicService } from '../../core/services/olympic.service';
+import {Router} from '@angular/router';
+
 
 import { signal } from '@angular/core';
 
@@ -25,6 +27,8 @@ echarts.use([BarChart, TitleComponent, GridComponent, CanvasRenderer, LegendComp
   ]
 })
 export class HomeChartComponent implements OnInit{
+
+  private router = inject(Router);
 
   public olympicDataSignal = signal<any>(null);
 
@@ -65,24 +69,26 @@ export class HomeChartComponent implements OnInit{
     //EXPL : on recupere directement l'obeserver depuis le service pour subscribe au "complete"
     this.olympicService.loadInitialData().subscribe({
       complete: () => {
+        // EXPL : on appelle getOlympics avec les doubles parenthèses car on recoit un signal en readOnly
         this.olympicDataSignal.set(this.olympicService.getOlympics()());
 
-        //EXPL : les options sont définies qu'à reception du "complete" sinon la librarie n'update pas le graph apparement 
+        //EXPL : les options sont définies qu'à reception du "complete" sinon il faut récuperer l'élément depuis le dom et utiliser la methode .setOptions() 
         this.options = {
           title: {
             left: '50%',
-            text: 'Nightingale Rose Diagram',
-            subtext: 'Mocking Data',
+            text: '',
+            subtext: '',
             textAlign: 'center',
           },
-          legend: {
-            align: 'auto',
-            bottom: 10,
-            data: this.olympicChartDataLegend,
-          },
+          // legend: {
+          //   align: 'auto',
+          //   bottom: 10,
+          //   data: this.olympicChartDataLegend,
+          // },
           tooltip: {
             trigger: 'item',
-            formatter: '{a} <br/>{b} : {c} ({d}%)',
+            //formatter: '{a} <br/>{b} : {c} ({d}%)',
+            formatter: '{b}<br/>{c}',
           },
           series: [
             {
@@ -101,8 +107,13 @@ export class HomeChartComponent implements OnInit{
     });
   }
 
-  onChartClick(e:object) {
-    console.log(typeof e, e);    
+  onChartClick(e:echarts.ECElementEvent) {
+    console.log(typeof e, e, e.name);    
+    let targetCountryId = (this.olympicDataSignal().find((element: Olympic) => element.country === e.name)).id;
+    console.log(targetCountryId);
+    
+    this.router.navigate(['details', targetCountryId])    
+
   }
   
 }

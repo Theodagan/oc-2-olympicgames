@@ -24,13 +24,17 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     console.log("Home component initialized");
-    
-    //EXPL : on recupere directement l'obeserver depuis le service pour subscribe au "complete"
-    this.olympicService.loadInitialData().subscribe({
-      complete: () => {
-        this.olympicData.set(this.olympicService.getOlympics()());
-      }
-    });
+    console.log(this.olympicService.isDataLoaded);
+    if(this.olympicService.isDataLoaded){
+
+    }else{
+      //EXPL : on recupere directement l'obeserver depuis le service pour subscribe au "complete"
+      this.olympicService.loadInitialData().subscribe({
+        complete: () => {
+          this.olympicData.set(this.olympicService.getOlympics()());
+        }
+      });
+    }    
   }
 
 }

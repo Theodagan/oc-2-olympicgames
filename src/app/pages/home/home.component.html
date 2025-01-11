@@ -1,9 +1,22 @@
-<p>home works!</p>
+<h1>Médailles par pays</h1>
+
+<div style="display: flex;">
+    <div>
+        <span>Nombre de JO</span>
+        <span>10</span>
+    </div>
+    <div>
+        <span> Nombre de pays</span>
+        <span>10</span>
+    </div>
+</div>
 
 <app-home-chart></app-home-chart>
 
 <br><br><br><br><br><br>
 <hr>
+
+
 <h2>Data test</h2>
 @for (item of olympicData(); track $index) {
     {{item.country}}
