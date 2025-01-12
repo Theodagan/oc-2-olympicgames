@@ -48,6 +48,7 @@ button:active{
     align-items: center;
     justify-content: space-evenly;
     height: 3em;
+    width: 25%;
 }
 
 .databar > div > span:first-child{
