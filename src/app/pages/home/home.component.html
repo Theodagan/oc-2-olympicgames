@@ -13,16 +13,3 @@
 
 <app-home-chart></app-home-chart>
 
-<br><br><br><br><br><br>
-<hr>
-
-
-<h2>Data test</h2>
-@for (item of olympicData(); track $index) {
-    {{item.country}}
-    <br>
-    @for (p of item.participations; track $index) {
-       {{p.year}} : {{p.medalsCount}} /
-    }
-    <br><br>
-}

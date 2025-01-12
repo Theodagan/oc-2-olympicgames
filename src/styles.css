@@ -5,6 +5,26 @@
     --color3: white;
 }
 
+button{
+    background-color: var(--color1);
+    color: var(--color3);
+    width: fit-content;
+    padding: 12px;
+    border: 2px solid var(--color1);
+    border-radius: 12px;
+    margin: 24px auto;
+    text-transform: capitalize;
+}
+
+button:hover{
+    background-color: transparent;
+    color: var(--color1);
+}
+
+button:active{
+    box-shadow: inset 0 0 0px 3px var(--color1);
+}
+
 .title{
     background-color: var(--color1);
     color: var(--color3);
@@ -36,4 +56,22 @@
 .databar > div > span:last-child{
     font-weight: bold;
     font-size: 1.2em;
+}
+
+.error{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    height: 90vh;
+    padding: 0 10vw;
+}
+.error span {
+    font-size: xx-large;
+    color: var(--color2);
+    margin-bottom: 3vh;
+}
+.error button{
+    width: fit-content;
+    margin: 0 auto;
 }
