@@ -1,1 +1,39 @@
 /* You can add global styles to this file, and also import other style files */
+:root{
+    --color1: #04838f;
+    --color2: grey;
+    --color3: white;
+}
+
+.title{
+    background-color: var(--color1);
+    color: var(--color3);
+    width: fit-content;
+    padding: 12px;
+    border-radius: 12px;
+    margin: 24px auto;
+}
+
+.databar{
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.databar > div {
+    border: 2px solid var(--color1);
+    padding: 12px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    height: 3em;
+}
+
+.databar > div > span:first-child{
+    color: var(--color2);
+}
+.databar > div > span:last-child{
+    font-weight: bold;
+    font-size: 1.2em;
+}
