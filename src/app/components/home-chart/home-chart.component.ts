@@ -37,24 +37,25 @@ export class HomeChartComponent implements OnInit{
 
   options: EChartsCoreOption = {};
   constructor(private olympicService: OlympicService) {
-    //handle changes in signals
+    //EXPL : handle changes in signals
     effect(() => {
-      console.log("effect fired 2", this.olympicDataSignal());
+      //console.log("effect fired 2", this.olympicDataSignal());
       let oDS = this.olympicDataSignal();
 
       //EXPL : DATA PARSING 
       if(oDS){ // EXPL : to avoid reading properties of null
         oDS.forEach((ol: Olympic) => {
-          console.info(ol.country);
+
           let olympicDataObject = {value: 0, name:''};
           let totalOfMedals = 0;
 
           (ol.participations).forEach((pt: Participation) => {
-            console.log(pt.medalsCount);
             totalOfMedals += pt.medalsCount;
           });
 
-          console.log("Test 9 : Recap foreach dataparsing", ol.country, totalOfMedals);
+          //DEBUG 
+          //console.log("Test 9 : Recap foreach dataparsing", ol.country, totalOfMedals);
+          
           olympicDataObject.name = ol.country;
           olympicDataObject.value = totalOfMedals;
 
@@ -66,11 +67,9 @@ export class HomeChartComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    //EXPL : on recupere directement l'obeserver depuis le service pour subscribe au "complete"
-    this.olympicService.loadInitialData().subscribe({
-      complete: () => {
-        // EXPL : on appelle getOlympics avec les doubles parenthèses car on recoit un signal en readOnly
-        this.olympicDataSignal.set(this.olympicService.getOlympics()());
+    this.olympicService.asyncFailSafe(() => {
+      // EXPL : on appelle getOlympics avec les doubles parenthèses car on recoit un signal en readOnly
+      this.olympicDataSignal.set(this.olympicService.getOlympics()());
 
         //EXPL : les options sont définies qu'à reception du "complete" sinon il faut récuperer l'élément depuis le dom et utiliser la methode .setOptions() 
         this.options = {
@@ -80,14 +79,8 @@ export class HomeChartComponent implements OnInit{
             subtext: '',
             textAlign: 'center',
           },
-          // legend: {
-          //   align: 'auto',
-          //   bottom: 10,
-          //   data: this.olympicChartDataLegend,
-          // },
           tooltip: {
             trigger: 'item',
-            //formatter: '{a} <br/>{b} : {c} ({d}%)',
             formatter: '{b}<br/>{c}',
           },
           series: [
@@ -95,25 +88,21 @@ export class HomeChartComponent implements OnInit{
               name: 'Pays',
               type: 'pie',
               center: ['50%', '50%'],
-              radius: [10, 110],
-              roseType: '', //change to '' for a look closer to the wireframe autres valeurs :[radius, area]
+              radius: [0, 110],
+              roseType: '', //change to '' for a look closer to the wireframe, autres valeurs :[radius, area]
               data: this.olympicChartData,
             },
           ],
           animationEasing: 'elasticOut',
           animationDelayUpdate: idx => idx * 5,
         };
-      }
-    });
+    })
   }
 
   onChartClick(e:echarts.ECElementEvent) {
-    console.log(typeof e, e, e.name);    
+    //console.log(typeof e, e, e.name);    
     let targetCountryId = (this.olympicDataSignal().find((element: Olympic) => element.country === e.name)).id;
-    console.log(targetCountryId);
-    
     this.router.navigate(['details', targetCountryId])    
-
   }
   
 }

@@ -47,19 +47,19 @@ button:active{
     flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
-    height: 3em;
     width: 25%;
 }
 
 .databar > div > span:first-child{
     color: var(--color2);
+    text-align: center;
 }
 .databar > div > span:last-child{
     font-weight: bold;
     font-size: 1.2em;
 }
 
-.error{
+.error, .warning{
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -67,12 +67,12 @@ button:active{
     height: 90vh;
     padding: 0 10vw;
 }
-.error span {
+.error span, .warning span {
     font-size: xx-large;
     color: var(--color2);
     margin-bottom: 3vh;
 }
-.error button{
+.error button, .warning button{
     width: fit-content;
     margin: 0 auto;
 }

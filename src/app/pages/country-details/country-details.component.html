@@ -1,20 +1,35 @@
-<a href=""><button>retour</button></a>
+@defer (when isIdValid) {
+    <a href=""><button>retour</button></a>
 
-<h2 class="title">{{countryName}}</h2>
+    <h2 class="title">{{countryName}}</h2>
 
-<div class="databar">
-    <div>
-        <span>Number of entries</span>
-        <span>{{countryNbrOfParticipations}}</span>
+    <div class="databar">
+        <div>
+            <span>Number of entries</span>
+            <span>{{countryNbrOfParticipations}}</span>
+        </div>
+        <div>
+            <span>Total number of medals </span>
+            <span>{{countryMedalsTotal}}</span>
+        </div>
+        <div>
+            <span>Total number of athletes </span>
+            <span>{{countryAthleteTotal}}</span>
+        </div>
     </div>
-    <div>
-        <span>Total number of medals </span>
-        <span>{{countryMedalsTotal}}</span>
-    </div>
-    <div>
-        <span>Total number of athletes </span>
-        <span>{{countryAthleteTotal}}</span>
-    </div>
-</div>
 
-<app-country-chart></app-country-chart>
+    <app-country-chart></app-country-chart>
+
+}@loading (after 1s) {
+    <div class="warning">
+        <span>Oups,<br> il semblerait que vos données prennent de temps à s'afficher</span>
+        <a href=""><button>Revenir à l'acceuil</button></a>
+    </div>
+}@placeholder {
+
+}@error {
+    <div class="error">
+        <span>Désolé,<br> il semble que la page que vous cherchez n'existe pas</span>
+        <a href=""><button>retour</button></a>
+    </div>
+}

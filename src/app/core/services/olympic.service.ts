@@ -1,42 +1,45 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, Signal, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Olympic } from '../models/olympic';
 import { Participation } from '../models/participation';
+import { WritableSignal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OlympicService {
   private olympicUrl = 'mock/olympic.json';
-  private olympicData = signal<any>(undefined);
+  //private olympicData = signal<any>(undefined);
+  public olympicData = signal<Olympic[]>([{id: 0, country: "", participations: []}]);
 
-  private observable = new Observable<any>();
+  private observable = new Observable<Olympic[]>();
   private hasBeenCalled : boolean = false;
   public isDataLoaded : boolean = false;
   
   constructor(private http: HttpClient) {}
   
   loadInitialData(){
-    //console.log("test 1", "loadInitialData", this.http.get<any>(this.olympicUrl));
     
     //EXPL : check si la fonciton a déjà été appellée pour ne pas créer 50 observables pour rien
     if(!this.hasBeenCalled){
       console.info('loadInitialData if')
       
       this.hasBeenCalled = true;
-      this.observable = this.http.get<any>(this.olympicUrl);
+      this.observable = this.http.get<Olympic[]>(this.olympicUrl);
+      console.warn(typeof this.observable, this.observable)
 
       this.observable.subscribe({
         next: (v) => {
-          console.log("test 2", v);
+          console.warn("test 2",typeof v, v);
           this.olympicData.set(v);
-          console.log("test 3", this.olympicData());
+          console.error(typeof this.olympicData() === typeof v);
         },
         error: (e) => console.error(e),
         complete: () => {
           console.info('data loaded');
           this.isDataLoaded = true;
+          //V2 unsubscribe observable here 
         }
       });
     }
@@ -54,11 +57,12 @@ export class OlympicService {
 
   getMedalsById(id: number | null = null){
     let parsed: DataT[] = [];
-    if(id){
+    let olympicDataElement = this.olympicData().find((element: Olympic) => element.id == id);
+
+    if(id && olympicDataElement){
       //return parsed data 
-      this.olympicData().find((element: Olympic) => element.id == id).participations.forEach((element: Participation) => {
+      olympicDataElement.participations.forEach((element: Participation) => {
         let object: DataT = {name: "", value: ["", 0]};
-        console.log(element.year, element.medalsCount);
         object.name = element.year.toString();
         object.value[0] = element.year.toString();
         object.value[1] = element.medalsCount;
@@ -70,17 +74,22 @@ export class OlympicService {
   
   getMedalsTotalById(id: number | null = null){
     let medalsTotal = 0;
-    if(id){
-      this.olympicData().find((element: Olympic) => element.id == id).participations.forEach((element: Participation) => {
+    let olympicDataElement = this.olympicData().find((element: Olympic) => element.id == id);
+
+    if(id && olympicDataElement){
+      olympicDataElement.participations.forEach((element: Participation) => {
         medalsTotal += element.medalsCount;
       });
     }
     return medalsTotal;
   }
+
   getAthleteTotalById(id: number | null = null){
     let athleteTotal = 0;
-    if(id){
-      this.olympicData().find((element: Olympic) => element.id == id).participations.forEach((element: Participation) => {
+    let olympicDataElement = this.olympicData().find((element: Olympic) => element.id == id);
+
+    if(id && olympicDataElement){
+      olympicDataElement.participations.forEach((element: Participation) => {
         athleteTotal += element.athleteCount;
       });
     }
@@ -88,21 +97,30 @@ export class OlympicService {
   }
 
   getNbrOfParticipationsbyId(id: number | null = null){
-    //QRK : bizzarement ici impossible d'acceder à .length sur l'array de participations, d'où le foreach
     let nbrParticipations = 0;
-    if(id){
-      this.olympicData().find((element: Olympic) => element.id == id).participations.forEach((element: Participation) => {
-        nbrParticipations ++;
-      });
+    let olympicDataElement = this.olympicData().find((element: Olympic) => element.id == id);
+
+    if(id && olympicDataElement){
+      nbrParticipations = olympicDataElement.participations.length;
     }
     return nbrParticipations;
   }
 
   getCountryNameById(id: number | null = null){
-    if(id){
-      return this.olympicData().find((element: Olympic) => element.id == id).country;
+    let olympicDataElement = this.olympicData().find((element: Olympic) => element.id == id);
+
+    if(id && olympicDataElement){
+      return olympicDataElement.country;
     }
     else{return "Pays"}
+  }
+
+  getAllIds(){
+    let ids: number[] = [];
+    this.olympicData().forEach((element: Olympic) => {
+      ids.push(element.id);
+    });
+    return ids;
   }
 
   asyncFailSafe(callback: Function){
@@ -114,10 +132,9 @@ export class OlympicService {
       });
     }
   }
-
 }
 
-
+//data structure for echarts 
 type DataT = {
   name: string,
   value: [string, number]

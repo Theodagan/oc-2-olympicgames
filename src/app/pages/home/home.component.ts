@@ -13,28 +13,22 @@ import { HomeChartComponent } from '../../components/home-chart/home-chart.compo
 export class HomeComponent implements OnInit {
 
   public olympicData = signal<any>(null); //change to undefined later
+  public nbrOfOlympicGames: number = 0;
+  public nbrOfCountries: number = 0;
   
 
-  constructor(private olympicService: OlympicService) {
-    //handle changes in signals
-    effect(() => {
-      console.log("effect fired", this.olympicData());
-    });
-  }
+  constructor(private olympicService: OlympicService) {}
 
   ngOnInit(): void {
     console.log("Home component initialized");
     console.log(this.olympicService.isDataLoaded);
-    if(this.olympicService.isDataLoaded){
 
-    }else{
-      //EXPL : on recupere directement l'obeserver depuis le service pour subscribe au "complete"
-      this.olympicService.loadInitialData().subscribe({
-        complete: () => {
-          this.olympicData.set(this.olympicService.getOlympics()());
-        }
-      });
-    }    
+    this.olympicService.asyncFailSafe(() => {
+      this.olympicData.set(this.olympicService.getOlympics()());
+      this.nbrOfOlympicGames = this.olympicService.getNbrOfParticipationsbyId(1);
+      this.nbrOfCountries = this.olympicService.getOlympics()().length;
+    });
+    
   }
 
 }

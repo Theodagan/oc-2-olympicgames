@@ -8,13 +8,9 @@ import { OlympicService } from './core/services/olympic.service';
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent implements OnInit {
-  title = 'myapp';
+export class AppComponent {
+  title = 'Olympic Games Tracker';
 
-  constructor(private olympicService: OlympicService){}
+  constructor(private olympicService: OlympicService){this.olympicService.loadInitialData();}
 
-  ngOnInit(): void {
-    console.log('AppComponent initialized');
-    this.olympicService.loadInitialData();
-  }
 }

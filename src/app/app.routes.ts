@@ -13,6 +13,10 @@ export const routes: Routes = [
       component: CountryDetailsComponent,
     },
     {
+      path: '404', // wildcard
+      component: NotFoundComponent,
+    },
+    {
       path: '**', // wildcard
       component: NotFoundComponent,
     },

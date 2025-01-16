@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { OlympicService } from '../../core/services/olympic.service';
 import { CountryChartComponent } from '../../components/country-chart/country-chart.component';
 import { provideEchartsCore } from 'ngx-echarts';
@@ -19,23 +19,26 @@ echarts.use([LineChart]);
 })
 export class CountryDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute);
-  private countryId: number | null = null;
+  private router = inject(Router)
+  private countryId: number = parseInt(this.route.snapshot.paramMap.get('id')?? "0");
 
   public countryName: string | null = null;
   public countryMedalsTotal: number = 0;
   public countryAthleteTotal: number = 0;
   public countryNbrOfParticipations: number = 0;
 
-  constructor(private olympicService: OlympicService) {}
+  public isIdValid: boolean = false;
+
+  constructor(private olympicService: OlympicService) {
+    this.olympicService.asyncFailSafe(() => {
+      if(!(this.olympicService.getAllIds().includes(this.countryId))){
+        this.router.navigate(['/404']);
+      }
+      else{this.isIdValid = true;}
+    });    
+  }
 
   ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      console.log(params['id']);
-      // TO DO : checker si les datas sont bien load$
-      this.countryId = params['id'];
-      //this.countryName = this.olympicService.getCountryNameById(params['id']);
-    });
-
     this.olympicService.asyncFailSafe(() => {
       this.countryName = this.olympicService.getCountryNameById(this.countryId)
       this.countryMedalsTotal = this.olympicService.getMedalsTotalById(this.countryId);
@@ -46,7 +49,3 @@ export class CountryDetailsComponent implements OnInit {
   }
 
 }
-
-// function test (callback: Function){
-//   if(1){callback}
-// }

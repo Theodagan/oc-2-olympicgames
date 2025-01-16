@@ -6,3 +6,4 @@ export interface Olympic {
     country: string,
     participations: Participation[]
 }
+
