@@ -1,59 +1,102 @@
-# Myapp
+# Olympic Medals Application
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.0.3.
 
-## Development server
+This app displays graphs representing medals won at the Olympic Games by different countries, based on a JSON file containing all the data.
 
-To start a local development server, run:
+---
+
+## Table of Contents
+
+1. [Installation](#installation)
+2. [Usage](#usage)
+3. [Available Scripts](#available-scripts)
+4. [Project Structure](#project-structure)
+5. [Contributing](#contributing)
+
+---
+
+## Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/Theodagan/oc-2-olympicgames.git
+   cd olympic-medals
+   ```
+
+2. Install the dependencies:
+
+   ```bash
+   npm install
+   # or with Yarn
+   yarn install
+   ```
+
+---
+
+## Usage
+
+### Start the Development Server
+
+Run the application in development mode:
 
 ```bash
+npm start
+# or with Angular CLI
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+By default, the application will be accessible at: [http://localhost:4200](http://localhost:4200)
 
-## Code scaffolding
+### Build for Production
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+To generate an optimized production build:
 
 ```bash
-ng generate --help
+npm run build
 ```
 
-## Building
+The output files will be placed in the `dist/` folder.
 
-To build the project run:
+---
 
-```bash
-ng build
+## Available Scripts
+
+- **`npm start`**: Starts the development server.
+- **`npm test`**: Runs unit tests via Karma.
+- **`npm run build`**: Compiles the application for production.
+- **`npm run lint`**: Checks the code using TSLint.
+- **`npm run e2e`**: Runs end-to-end tests with Protractor.
+
+---
+
+## Project Structure
+
+Here is an overview of the main project files:
+
+```
+OC-2-OLYMPICGAMES/           
+|--public/            # Static files (formerly /assets)
+|  |-- mock/
+|  |   |-- olympic.json    # Olypimc games data
+|--src/
+|  |-- app/
+|  |   |-- components/    # Angular components
+|  |   |-- core/      # Angular services and data interfaces
+|  |   |-- pages/  # Angular components acting as views
+|  |
+|  |-- index.html         # HTML entry point
+|  |-- main.ts            # TypeScript entry point
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+---
 
-## Running unit tests
+## Contributing
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+Contributions are welcome! Here’s how you can help:
 
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+1. Fork this repository.
+2. Create a branch for your feature: `git checkout -b feature/feature-name`.
+3. Make clear and detailed commits.
+4. Submit a pull request.
