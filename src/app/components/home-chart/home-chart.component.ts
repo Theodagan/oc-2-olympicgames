@@ -1,4 +1,4 @@
-import { Component, OnInit, effect, inject } from '@angular/core';
+import { AfterViewInit, Component, HostListener, OnInit, effect, inject } from '@angular/core';
 import { OlympicService } from '../../core/services/olympic.service';
 import {Router} from '@angular/router';
 
@@ -14,6 +14,7 @@ import { CommonModule } from '@angular/common';
 import type { EChartsCoreOption } from 'echarts/core';
 import { Olympic } from '../../core/models/olympic';
 import { Participation } from '../../core/models/participation';
+import { log } from 'echarts/types/src/util/log.js';
 echarts.use([BarChart, TitleComponent, GridComponent, CanvasRenderer, LegendComponent, TooltipComponent, PieChart]);
 
 @Component({
@@ -26,16 +27,21 @@ echarts.use([BarChart, TitleComponent, GridComponent, CanvasRenderer, LegendComp
     provideEchartsCore({ echarts }),
   ]
 })
-export class HomeChartComponent implements OnInit{
-
-  private router = inject(Router);
-
-  public olympicDataSignal = signal<any>(null);
-
+export class HomeChartComponent implements OnInit, AfterViewInit{
+  private router = inject(Router); 
+  public olympicDataSignal = signal<Olympic[] | null >(null);
+  
   olympicChartData: object[] = [];
   olympicChartDataLegend: string[] = [];
-
+  
   options: EChartsCoreOption = {};
+
+  @HostListener("window:resize", ["$event"]) 
+  OnResizeEvent(event: any){
+    console.log("test", event.target.innerWidth);
+    this.resizeChart(event.target.innerWidth);
+  }
+  
   constructor(private olympicService: OlympicService) {
     //EXPL : handle changes in signals
     effect(() => {
@@ -67,42 +73,65 @@ export class HomeChartComponent implements OnInit{
   }
 
   ngOnInit(): void {
+    console.log(window.innerWidth);
+    
     this.olympicService.asyncFailSafe(() => {
       // EXPL : on appelle getOlympics avec les doubles parenthèses car on recoit un signal en readOnly
       this.olympicDataSignal.set(this.olympicService.getOlympics()());
-
-        //EXPL : les options sont définies qu'à reception du "complete" sinon il faut récuperer l'élément depuis le dom et utiliser la methode .setOptions() 
-        this.options = {
-          title: {
-            left: '50%',
-            text: '',
-            subtext: '',
-            textAlign: 'center',
+      
+      //EXPL : les options sont définies qu'à reception du "complete" sinon il faut récuperer l'élément depuis le dom et utiliser la methode .setOptions() 
+      this.options = {
+        title: {
+          left: '50%',
+          text: '',
+          subtext: '',
+          textAlign: 'center',
+        },
+        tooltip: {
+          trigger: 'item',
+          formatter: '{b}<br/>{c}',
+        },
+        series: [
+          {
+            name: 'Pays',
+            type: 'pie',
+            center: ['50%', '50%'],
+            radius: [0, 110],
+            roseType: '', //change to '' for a look closer to the wireframe, autres valeurs :[radius, area]
+            data: this.olympicChartData,
           },
-          tooltip: {
-            trigger: 'item',
-            formatter: '{b}<br/>{c}',
-          },
-          series: [
-            {
-              name: 'Pays',
-              type: 'pie',
-              center: ['50%', '50%'],
-              radius: [0, 110],
-              roseType: '', //change to '' for a look closer to the wireframe, autres valeurs :[radius, area]
-              data: this.olympicChartData,
-            },
-          ],
-          animationEasing: 'elasticOut',
-          animationDelayUpdate: idx => idx * 5,
-        };
+        ],
+        animationEasing: 'elasticOut',
+        animationDelayUpdate: idx => idx * 5,
+      };
     })
+    console.log(this.options);
+    
+  }
+
+  ngAfterViewInit(): void {
+    console.log("test", window.innerWidth);
+    
+    this.olympicService.asyncFailSafe(() => {this.resizeChart(window.innerWidth);})
   }
 
   onChartClick(e:echarts.ECElementEvent) {
     //console.log(typeof e, e, e.name);    
-    let targetCountryId = (this.olympicDataSignal().find((element: Olympic) => element.country === e.name)).id;
-    this.router.navigate(['details', targetCountryId])    
+    let targetCountryId = (this.olympicDataSignal()?.find((element: Olympic) => element.country === e.name))?.id;
+    targetCountryId ? this.router.navigate(['details', targetCountryId]) : this.router.navigate(['not-found'])  ;   
   }
   
+  resizeChart(w: number){
+    let newWidth = w * .2;
+    if(newWidth > 110 ){ newWidth = 110 }
+    if(w < 350 ){ newWidth = 22 }
+    echarts.getInstanceByDom(document.querySelector('#homeChart') as HTMLElement)?.setOption({
+      series: [
+        {
+          name: 'Pays',
+          radius : [0, newWidth],
+        }
+      ]
+    });
+  }
 }

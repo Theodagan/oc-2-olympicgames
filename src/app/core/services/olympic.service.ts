@@ -1,9 +1,8 @@
-import { Injectable, Signal, signal } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Olympic } from '../models/olympic';
 import { Participation } from '../models/participation';
-import { WritableSignal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
@@ -23,17 +22,13 @@ export class OlympicService {
     
     //EXPL : check si la fonciton a déjà été appellée pour ne pas créer 50 observables pour rien
     if(!this.hasBeenCalled){
-      console.info('loadInitialData if')
       
       this.hasBeenCalled = true;
       this.observable = this.http.get<Olympic[]>(this.olympicUrl);
-      console.warn(typeof this.observable, this.observable)
 
       this.observable.subscribe({
         next: (v) => {
-          console.warn("test 2",typeof v, v);
           this.olympicData.set(v);
-          console.error(typeof this.olympicData() === typeof v);
         },
         error: (e) => console.error(e),
         complete: () => {
@@ -43,11 +38,7 @@ export class OlympicService {
         }
       });
     }
-    
-    //V2 faire du return une fonction séparée ?
-
-    //EXPL : renvoit l'observable pour pouvoir subscribe au complete de n'importe où
-    //console.log("test 4", this.observable);
+    //EXPL(v1) : renvoit l'observable pour pouvoir subscribe au complete de n'importe où
     return this.observable;
   }
   
